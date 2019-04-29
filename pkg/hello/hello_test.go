@@ -8,7 +8,7 @@ import (
 )
 
 func TestHello(t *testing.T) {
-	failpoint.Enable("IfCondInject", "return(true)")
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/IfCondInject", "return(true)")
 	Hello()
 	assert.True(t, true)
 }
@@ -18,6 +18,6 @@ func TestShake(t *testing.T) {
 		r := recover()
 		assert.Equal(t, r, errorOops)
 	}()
-	failpoint.Enable("PanicInject", "return(true)")
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/PanicInject", "return(true)")
 	Shake()
 }
