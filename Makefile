@@ -25,8 +25,8 @@ coverage:
 	GO111MODULE=off go get github.com/zhouqiang-cl/gocovmerge
 	gocovmerge "$(TEST_DIR)"/cov.* | grep -vE ".*.pb.go|.*.__failpoint_binding__.go" > "$(TEST_DIR)/all_cov.out"
 ifeq ("$(GL_TRAVIS_CI)", "on")
-    GO111MODULE=off go get github.com/mattn/goveralls
-    goveralls -coverprofile=$(TEST_DIR)/all_cov.out -service=travis-ci
+	GO111MODULE=off go get github.com/mattn/goveralls
+	goveralls -coverprofile=$(TEST_DIR)/all_cov.out -service=travis-ci
 else
 	go tool cover -html "$(TEST_DIR)/all_cov.out" -o "$(TEST_DIR)/all_cov.html"
 endif
