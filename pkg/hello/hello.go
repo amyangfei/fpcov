@@ -21,7 +21,7 @@ func Hello() {
 		failpoint.Inject("IfCondInjecct", func() {
 			fmt.Println("set code inject in if condition")
 		})
-		*v = success
+		setCode(&i)
 	}(&i); i == success {
 		failpoint.Inject("IfCondInjecct", func() {
 			fmt.Println("set code inject in if body")
