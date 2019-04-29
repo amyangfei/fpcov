@@ -2,26 +2,37 @@ package hello
 
 import (
 	"fmt"
+
 	"github.com/pingcap/failpoint"
 )
 
-func setCode(i *int) {
-	*i = 200
-}
+const (
+	success   = 200
+	errorOops = "ooops..."
+)
 
-const success = 200
+func setCode(i *int) {
+	*i = success
+}
 
 func Hello() {
 	var i int
 	if func(v *int) {
-		failpoint.Inject("fptest-in-pkg", func() {
+		failpoint.Inject("IfCondInjecct", func() {
 			fmt.Println("set code inject in if condition")
 		})
 		*v = success
 	}(&i); i == success {
-		failpoint.Inject("fptest-in-pkg", func() {
+		failpoint.Inject("IfCondInjecct", func() {
 			fmt.Println("set code inject in if body")
 		})
 		fmt.Printf("i = %d success!\n", i)
 	}
+}
+
+func Shake() {
+	failpoint.Inject("PanicInject", func() {
+		panic(errorOops)
+	})
+	fmt.Println("everything goes well")
 }
