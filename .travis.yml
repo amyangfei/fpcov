@@ -1,0 +1,14 @@
+language: go
+go:
+  - 1.12
+
+env:
+  - GOARCH=amd64
+
+go_import_path: github.com/amyangfei/fpcov
+
+before_install:
+  - go get github.com/mattn/goveralls
+
+script:
+  - make unit_test && env GL_TRAVIS_CI=on make coverage
