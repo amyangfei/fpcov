@@ -8,26 +8,29 @@ import (
 
 const (
 	success   = 200
+	success2  = 201
 	errorOops = "ooops..."
 )
 
-func setCode(i *int) {
-	*i = success
+func setCode(i *int, val int) {
+	fmt.Printf("set i from %d to %d!\n", *i, val)
+	*i = val
 }
 
-func Hello() {
+func Hello() int {
 	var i int
 	if func(v *int) {
-		failpoint.Inject("IfCondInjecct", func() {
+		failpoint.Inject("IfCondInject", func() {
 			fmt.Println("set code inject in if condition")
+			setCode(&i, success)
 		})
-		setCode(&i)
-	}(&i); i == success {
-		failpoint.Inject("IfCondInjecct", func() {
+	}(&i); i != success {
+		failpoint.Inject("IfCondInject", func() {
 			fmt.Println("set code inject in if body")
 		})
-		fmt.Printf("i = %d success!\n", i)
+		setCode(&i, success2)
 	}
+	return i
 }
 
 func Shake() {

@@ -9,8 +9,8 @@ import (
 
 func TestHello(t *testing.T) {
 	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/IfCondInject", "return(true)")
-	Hello()
-	assert.True(t, true)
+	val := Hello()
+	assert.Equal(t, val, success)
 }
 
 func TestShake(t *testing.T) {
