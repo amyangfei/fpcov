@@ -29,7 +29,7 @@ func TestShake(t *testing.T) {
 	Shake()
 }
 
-func TestSubRoutinePanic(t *testing.T) {
+func TestSubRoutineExit(t *testing.T) {
 	// Save current function and restore at the end:
 	oldOsExit := osExit
 	defer func() { osExit = oldOsExit }()
@@ -41,8 +41,8 @@ func TestSubRoutinePanic(t *testing.T) {
 
 	osExit = myExit
 
-	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/RoutinePanic", "return(true)")
-	SubRoutinePanic()
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/RoutineExit", "return(true)")
+	SubRoutineExit()
 
 	assert.Equal(t, got, 1)
 }

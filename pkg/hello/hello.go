@@ -51,12 +51,12 @@ func Shake() {
 	fmt.Println("everything goes well")
 }
 
-func SubRoutinePanic() {
+func SubRoutineExit() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		failpoint.Inject("RoutinePanic", func() {
+		failpoint.Inject("RoutineExit", func() {
 			fmt.Println("exit injection")
 			osExit(1)
 		})
