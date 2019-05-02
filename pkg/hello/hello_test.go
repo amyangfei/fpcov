@@ -19,10 +19,30 @@ func TestHello(t *testing.T) {
 }
 
 func TestShake(t *testing.T) {
+	Shake()
+
 	defer func() {
 		r := recover()
 		assert.Equal(t, r, errorOops)
 	}()
 	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/PanicInject", "return(true)")
 	Shake()
+}
+
+func TestSubRoutineExit(t *testing.T) {
+	// Save current function and restore at the end:
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	myExit := func(code int) {
+		got = code
+	}
+
+	osExit = myExit
+
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/RoutineExit", "return(true)")
+	SubRoutineExit()
+
+	assert.Equal(t, got, 1)
 }

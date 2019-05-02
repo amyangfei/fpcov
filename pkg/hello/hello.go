@@ -2,6 +2,8 @@ package hello
 
 import (
 	"fmt"
+	"os"
+	"sync"
 
 	"github.com/pingcap/failpoint"
 )
@@ -11,6 +13,14 @@ const (
 	success2  = 201
 	errorOops = "ooops..."
 )
+
+var (
+	osExit func(int)
+)
+
+func init() {
+	osExit = os.Exit
+}
 
 func setCode(i *int, val int) {
 	fmt.Printf("set i from %d to %d!\n", *i, val)
@@ -39,4 +49,17 @@ func Shake() {
 		panic(errorOops)
 	})
 	fmt.Println("everything goes well")
+}
+
+func SubRoutineExit() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		failpoint.Inject("RoutineExit", func() {
+			fmt.Println("exit injection")
+			osExit(1)
+		})
+	}()
+	wg.Wait()
 }
