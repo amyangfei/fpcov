@@ -2,11 +2,10 @@ package hello
 
 import (
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/pingcap/failpoint"
-
-	"github.com/amyangfei/fpcov/pkg/atexit"
 )
 
 const (
@@ -15,8 +14,12 @@ const (
 	errorOops = "ooops..."
 )
 
+var (
+	osExit func(int)
+)
+
 func init() {
-	atexit.Register(func() {})
+	osExit = os.Exit
 }
 
 func setCode(i *int, val int) {
@@ -55,7 +58,7 @@ func SubRoutinePanic() {
 		defer wg.Done()
 		failpoint.Inject("RoutinePanic", func() {
 			fmt.Println("exit injection")
-			atexit.Exit(0)
+			osExit(1)
 		})
 	}()
 	wg.Wait()
