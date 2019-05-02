@@ -19,10 +19,17 @@ func TestHello(t *testing.T) {
 }
 
 func TestShake(t *testing.T) {
+	Shake()
+
 	defer func() {
 		r := recover()
 		assert.Equal(t, r, errorOops)
 	}()
 	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/PanicInject", "return(true)")
 	Shake()
+}
+
+func TestSubRoutinePanic(t *testing.T) {
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/RoutinePanic", "return(true)")
+	SubRoutinePanic()
 }
