@@ -19,13 +19,14 @@ func setCode(i *int, val int) {
 
 func Hello() int {
 	var i int
-	if func(v *int) {
+	if j := func(v *int) int {
 		failpoint.Inject("IfCondInject", func() {
 			fmt.Println("set code inject in if condition")
 			setCode(&i, success)
 		})
-	}(&i); i != success {
-		failpoint.Inject("IfCondInject", func() {
+		return *v
+	}(&i); j != success {
+		failpoint.Inject("IfBodyInject", func() {
 			fmt.Println("set code inject in if body")
 		})
 		setCode(&i, success2)

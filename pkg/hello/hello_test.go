@@ -11,6 +11,11 @@ func TestHello(t *testing.T) {
 	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/IfCondInject", "return(true)")
 	val := Hello()
 	assert.Equal(t, val, success)
+
+	failpoint.Disable("github.com/amyangfei/fpcov/pkg/hello/IfCondInject")
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/IfBodyInject", "return(true)")
+	val = Hello()
+	assert.Equal(t, val, success2)
 }
 
 func TestShake(t *testing.T) {
