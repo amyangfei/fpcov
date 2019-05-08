@@ -71,15 +71,21 @@ func Boundary() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	go func() {
+		fmt.Println("before sleep 1")
+		time.Sleep(time.Second * 300)
+		fmt.Println("after long sleep 2")
+	}()
+
 	go func(cctx context.Context) {
-		fmt.Println("before sleep")
+		fmt.Println("before sleep 2")
 		select {
 		case <-cctx.Done():
 			fmt.Println("sleep boundary exit")
 			return
 		case <-time.After(time.Second * 300):
 		}
-		fmt.Println("after long sleep")
+		fmt.Println("after long sleep 2")
 	}(ctx)
 
 	wg.Add(1)
