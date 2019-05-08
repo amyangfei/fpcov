@@ -8,5 +8,5 @@ env:
 go_import_path: github.com/amyangfei/fpcov
 
 script:
-  - make unit_test
+  - make test
   - env GL_TRAVIS_CI=on make coverage
