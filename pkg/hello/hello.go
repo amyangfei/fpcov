@@ -80,9 +80,14 @@ func Boundary() {
 	}()
 
 	go func() {
+		time.Sleep(time.Second * 300)
+		fmt.Println("after long sleep 4")
+	}()
+
+	go func() {
 		fmt.Println("before sleep 1")
 		time.Sleep(time.Second * 300)
-		fmt.Println("after long sleep 2")
+		fmt.Println("after long sleep 1")
 	}()
 
 	go func(cctx context.Context) {
