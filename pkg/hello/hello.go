@@ -80,17 +80,14 @@ func Boundary() {
 	}()
 
 	go func() {
-		time.Sleep(time.Second * 300)
-		fmt.Println("after long sleep 4")
-	}()
-
-	go func() {
 		fmt.Println("before sleep 1")
 		time.Sleep(time.Second * 300)
 		fmt.Println("after long sleep 1")
 	}()
 
+	wg.Add(1)
 	go func(cctx context.Context) {
+		defer wg.Done()
 		fmt.Println("before sleep 2")
 		select {
 		case <-cctx.Done():
@@ -101,12 +98,10 @@ func Boundary() {
 		fmt.Println("after long sleep 2")
 	}(ctx)
 
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
 		time.Sleep(time.Millisecond * 100)
+		cancel()
 	}()
 
 	wg.Wait()
-	cancel()
 }
