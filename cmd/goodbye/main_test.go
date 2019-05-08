@@ -82,6 +82,6 @@ func test2(t *testing.T) {
 }
 
 func TestRunMain(t *testing.T) {
-	// test1(t)
-	test2(t)
+	test1(t)
+	// test2(t)
 }
