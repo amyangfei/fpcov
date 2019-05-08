@@ -1,6 +1,7 @@
 package hello
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"sync"
@@ -67,15 +68,26 @@ func SubRoutineExit() {
 
 func Boundary() {
 	var wg sync.WaitGroup
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func(cctx context.Context) {
+		fmt.Println("before sleep")
+		select {
+		case <-cctx.Done():
+			fmt.Println("sleep boundary exit")
+			return
+		case <-time.After(time.Second * 300):
+		}
+		fmt.Println("after long sleep")
+	}(ctx)
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		time.Sleep(time.Millisecond * 100)
 	}()
-	go func() {
-		fmt.Println("before sleep")
-		time.Sleep(time.Second * 300)
-		fmt.Println("after sleep")
-	}()
+
 	wg.Wait()
+	cancel()
 }
