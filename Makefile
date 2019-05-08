@@ -8,18 +8,31 @@ FAILPOINT_ENABLE  := $$(echo $(FAILPOINT_DIR) | xargs $(FAILPOINT) enable >/dev/
 FAILPOINT_DISABLE := $$(find $(FAILPOINT_DIR) | xargs $(FAILPOINT) disable >/dev/null)
 TEST_DIR := /tmp/failpoint_test
 
-.PHONY: unit_test coverage build
+.PHONY: test unit_test coverage build integration_test_build
 
 build:
-	$(GOBUILD) -o bin/main ./cmd
+	$(GOBUILD) -o bin/hello ./cmd/hello
+	$(GOBUILD) -o bin/goodbye ./cmd/goodbye
 
-unit_test:
-	which $(FAILPOINT) >/dev/null 2>&1 || $(GOBUILD) -o $(FAILPOINT) github.com/pingcap/failpoint/failpoint-ctl
+integration_test_build: install-failpoint
+	$(FAILPOINT_ENABLE)
+	$(GOTEST) -c -race -cover -covermode=atomic \
+        -coverpkg=github.com/amyangfei/fpcov/... \
+        -o bin/goodbye.test github.com/amyangfei/fpcov/cmd/goodbye \
+        || { $(FAILPOINT_DISABLE); exit 1; }
+	$(FAILPOINT_DISABLE)
+
+integration_test: integration_test_build
+	tests/run.sh
+
+unit_test: install-failpoint
 	mkdir -p $(TEST_DIR)
 	$(FAILPOINT_ENABLE)
 	$(GOTEST) -covermode=atomic -coverprofile="$(TEST_DIR)/cov.unit_test.out" $(PACKAGES) \
 	|| { $(FAILPOINT_DISABLE); exit 1; }
 	$(FAILPOINT_DISABLE)
+
+test: unit_test integration_test
 
 coverage:
 	GO111MODULE=off go get github.com/zhouqiang-cl/gocovmerge
@@ -30,6 +43,9 @@ ifeq ("$(GL_TRAVIS_CI)", "on")
 else
 	go tool cover -html "$(TEST_DIR)/all_cov.out" -o "$(TEST_DIR)/all_cov.html"
 endif
+
+install-failpoint:
+	which $(FAILPOINT) >/dev/null 2>&1 || $(GOBUILD) -o $(FAILPOINT) github.com/pingcap/failpoint/failpoint-ctl
 
 failpoint-enable:
 	$(FAILPOINT_ENABLE)
