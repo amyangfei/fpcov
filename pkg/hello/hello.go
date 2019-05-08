@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/pingcap/failpoint"
 )
@@ -60,6 +61,21 @@ func SubRoutineExit() {
 			fmt.Println("exit injection")
 			osExit(1)
 		})
+	}()
+	wg.Wait()
+}
+
+func Boundary() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(time.Millisecond * 100)
+	}()
+	go func() {
+		fmt.Println("before sleep")
+		time.Sleep(time.Second * 300)
+		fmt.Println("after sleep")
 	}()
 	wg.Wait()
 }

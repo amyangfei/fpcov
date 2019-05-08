@@ -46,3 +46,7 @@ func TestSubRoutineExit(t *testing.T) {
 
 	assert.Equal(t, got, 1)
 }
+
+func TestBoundary(t *testing.T) {
+	Boundary()
+}
