@@ -72,6 +72,14 @@ func Boundary() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
+		failpoint.Inject("BoundaryEnable", func() {
+			fmt.Println("before sleep 3")
+			time.Sleep(time.Second * 300)
+			fmt.Println("after long sleep 3")
+		})
+	}()
+
+	go func() {
 		fmt.Println("before sleep 1")
 		time.Sleep(time.Second * 300)
 		fmt.Println("after long sleep 2")

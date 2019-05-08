@@ -48,5 +48,6 @@ func TestSubRoutineExit(t *testing.T) {
 }
 
 func TestBoundary(t *testing.T) {
+	failpoint.Enable("github.com/amyangfei/fpcov/pkg/hello/BoundaryEnable", "return(true)")
 	Boundary()
 }
